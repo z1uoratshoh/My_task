@@ -15,8 +15,15 @@
     main{max-width:760px;margin:auto;padding:0 14px 100px}.panel{background:rgba(18,35,27,.96);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0}
     .topline{display:flex;align-items:center;justify-content:space-between;gap:10px}.daytitle{font-size:19px;font-weight:750}.pill{color:var(--gold);font-size:12px;border:1px solid #675a35;border-radius:999px;padding:5px 9px}
     .progress{height:8px;background:#26392d;border-radius:99px;overflow:hidden;margin:12px 0 15px}.bar{height:100%;width:0;background:linear-gradient(90deg,#22c55e,#a3e635);transition:width .2s}
-    .days{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}.daybtn{border:1px solid var(--line);background:#13241b;color:var(--text);border-radius:9px;padding:9px 0;font-weight:650}.daybtn.active{background:#1d6840;border-color:var(--green)}.daybtn.hasdata:after{content:"•";display:block;color:var(--green);font-size:10px;height:0;position:relative;top:-3px}
-    h2{font-size:17px;margin:0 0 12px}.sectionhead{display:flex;align-items:center;gap:9px;margin-bottom:12px}.emoji{font-size:20px}
+    .days{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 1px 8px;scrollbar-width:thin;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+    .daybtn{flex:0 0 46px;scroll-snap-align:center;border:1px solid var(--line);background:#13241b;color:var(--text);border-radius:12px;padding:12px 0;font-weight:650}
+    .daybtn.active{background:#1d6840;border-color:var(--green)}
+    .daybtn.hasdata{box-shadow:inset 0 -3px 0 #4ade80}
+    .tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+    .tab{border:1px solid var(--line);background:#12231b;color:var(--muted);border-radius:13px;padding:13px 10px;font:inherit;font-weight:700;line-height:1.25}
+    .tab.active{background:#1d6840;border-color:var(--green);color:#fff}
+    .tabsection[hidden]{display:none}
+    h2{font-size:18px;margin:0}.sectionhead{display:flex;align-items:center;gap:9px;margin-bottom:14px}
     .checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.checkrow{display:flex;align-items:center;gap:9px;background:#172b20;border:1px solid #263f30;border-radius:12px;padding:11px;min-height:48px}.checkrow input{accent-color:var(--green);width:19px;height:19px}
     label.field{display:block;font-size:13px;color:var(--muted);margin:11px 0 5px}input[type=text],input[type=number],input[type=time],input[type=date],textarea,select{width:100%;background:#0d1b13;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:11px;font:inherit;outline:none}textarea{min-height:80px;resize:vertical}
     .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -24,13 +31,13 @@
     .small{font-size:12px;color:var(--muted)}.btn{border:0;border-radius:11px;padding:12px 14px;font:inherit;font-weight:700;cursor:pointer}.primary{background:var(--green);color:#092012}.secondary{background:#20392a;color:var(--text);border:1px solid var(--line)}.danger{background:#3b2222;color:#ffd6d6;border:1px solid #704040}
     .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btnrow .btn{flex:1}.sticky{position:fixed;bottom:0;left:0;right:0;background:#0b1712ed;border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;justify-content:center;backdrop-filter:blur(12px)}.stickyinner{max-width:760px;width:100%;display:flex;gap:8px}.sticky .btn{flex:1}
     .toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#1d6840;padding:10px 15px;border-radius:999px;display:none;z-index:10;box-shadow:0 6px 25px #0006}
-    @media(min-width:600px){.checks{grid-template-columns:repeat(3,minmax(0,1fr))}.days{grid-template-columns:repeat(10,1fr)}}
+    @media(min-width:600px){.checks{grid-template-columns:repeat(3,minmax(0,1fr))}.daybtn{flex-basis:52px}}
   </style>
 </head>
 <body>
 <header>
-  <h1>🌙 30 дней дисциплины</h1>
-  <div class="sub">Намазы · знания · тренировки · здоровье</div>
+  <h1>30 дней дисциплины</h1>
+  <div class="sub">Личный трекер привычек</div>
 </header>
 <main>
   <section class="panel">
@@ -39,11 +46,17 @@
     <div class="topline"><span class="small" id="completionText">0 привычек отмечено сегодня</span><span class="small" id="percentText">0%</span></div>
     <label class="field" for="startDate">Дата начала челленджа</label>
     <input type="date" id="startDate">
-    <div style="height:14px"></div><div class="days" id="days"></div>
+    <div style="height:14px"></div><div class="days" id="days" aria-label="Выбор дня челленджа"></div>
   </section>
 
+  <nav class="tabs" aria-label="Разделы приложения">
+    <button class="tab active" data-tab="faith">Намазы и обучение</button>
+    <button class="tab" data-tab="fitness">Тренировки и здоровье</button>
+  </nav>
+
+  <div id="faithSection" class="tabsection">
   <section class="panel">
-    <div class="sectionhead"><span class="emoji">🕌</span><h2>Намазы</h2></div>
+    <div class="sectionhead"><h2>Намазы</h2></div>
     <div class="checks" id="prayers">
       <label class="checkrow"><input type="checkbox" data-check="fajr">Фаджр</label>
       <label class="checkrow"><input type="checkbox" data-check="dhuhr">Зухр</label>
@@ -54,7 +67,7 @@
   </section>
 
   <section class="panel">
-    <div class="sectionhead"><span class="emoji">📚</span><h2>Чтение и обучение</h2></div>
+    <div class="sectionhead"><h2>Чтение и обучение</h2></div>
     <div class="grid2">
       <div><label class="field" for="pages">Страниц книги прочитано сегодня</label><input id="pages" type="number" min="0" step="1" placeholder="Например, 12" data-field="pages"></div>
       <div><label class="field" for="learnedTotal">Сколько выучил сегодня</label><input id="learnedTotal" type="number" min="0" step="1" placeholder="Например, 3" data-field="learnedTotal"></div>
@@ -62,9 +75,11 @@
     <label class="field" for="learnedUnit">Что считаешь? (аяты, слова, страницы…)</label><input id="learnedUnit" type="text" placeholder="Например, новых слов" data-field="learnedUnit">
     <label class="field" for="learningNotes">Заметки об обучении</label><textarea id="learningNotes" placeholder="Что прочитал или выучил?" data-field="learningNotes"></textarea>
   </section>
+  </div>
 
+  <div id="fitnessSection" class="tabsection" hidden>
   <section class="panel">
-    <div class="sectionhead"><span class="emoji">💪</span><h2>Тренировка</h2></div>
+    <div class="sectionhead"><span class="emoji">Тренировка</span><h2>Тренировка</h2></div>
     <div class="grid3">
       <label class="workout"><input type="checkbox" data-check="upper"><span>Верх тела</span></label>
       <label class="workout"><input type="checkbox" data-check="core"><span>Корпус / пресс</span></label>
@@ -74,7 +89,7 @@
   </section>
 
   <section class="panel">
-    <div class="sectionhead"><span class="emoji">😴</span><h2>Сон</h2></div>
+    <div class="sectionhead"><h2>Сон</h2></div>
     <div class="grid2">
       <div><label class="field" for="sleepTime">Лёг спать</label><input type="time" id="sleepTime" data-field="sleepTime"></div>
       <div><label class="field" for="wakeTime">Проснулся</label><input type="time" id="wakeTime" data-field="wakeTime"></div>
@@ -83,7 +98,7 @@
   </section>
 
   <section class="panel">
-    <div class="sectionhead"><span class="emoji">🥗</span><h2>Питание</h2></div>
+    <div class="sectionhead"><h2>Питание</h2></div>
     <div class="checks">
       <label class="checkrow"><input type="checkbox" data-check="breakfast">Завтрак</label>
       <label class="checkrow"><input type="checkbox" data-check="lunch">Обед</label>
@@ -94,16 +109,18 @@
   </section>
 
   <section class="panel">
-    <div class="sectionhead"><span class="emoji">📏</span><h2>Показатели тела</h2></div>
+    <div class="sectionhead"><h2>Показатели тела</h2></div>
     <div class="grid2">
       <div><label class="field" for="weight">Вес (кг)</label><input type="number" id="weight" min="0" step="0.1" placeholder="Например, 68.5" data-field="weight"></div>
       <div><label class="field" for="height">Рост (см)</label><input type="number" id="height" min="0" step="0.1" placeholder="Например, 175" data-field="height"></div>
     </div>
     <div class="small" style="margin-top:8px">Рост можно записывать при необходимости; вес — когда удобно отслеживать изменения.</div>
   </section>
+  </div>
 
+  <div id="notesSection" class="tabsection" hidden>
   <section class="panel">
-    <div class="sectionhead"><span class="emoji">🗒️</span><h2>Итог дня</h2></div>
+    <div class="sectionhead"><h2>Итог дня</h2></div>
     <label class="field" for="dayNotes">Заметки и выводы</label><textarea id="dayNotes" placeholder="Что получилось? Что улучшить завтра?" data-field="dayNotes"></textarea>
     <div class="btnrow">
       <button class="btn secondary" id="exportBtn">Экспортировать резервную копию</button>
@@ -112,6 +129,7 @@
     </div>
     <div class="small" style="margin-top:10px">Данные хранятся в этом браузере на этом устройстве. Экспортируй резервную копию, если не хочешь потерять записи при очистке данных браузера.</div>
   </section>
+  </div>
 </main>
 <div class="sticky"><div class="stickyinner"><button class="btn secondary" id="prevBtn">← День назад</button><button class="btn primary" id="saveBtn">Сохранить день</button><button class="btn secondary" id="nextBtn">Следующий →</button></div></div>
 <div class="toast" id="toast">Сохранено</div>
@@ -168,6 +186,13 @@
   fields.forEach(el=>{el.addEventListener('input',()=>{capture();updateSleep();});});
   checks.forEach(el=>el.addEventListener('change',capture));
   $('startDate').value=state.startDate||defaults.startDate;
+  document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b===btn));
+    $('faithSection').hidden=btn.dataset.tab!=='faith';
+    $('fitnessSection').hidden=btn.dataset.tab!=='fitness';
+    $('notesSection').hidden=btn.dataset.tab!=='fitness';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }));
   $('startDate').addEventListener('change',()=>{state.startDate=$('startDate').value;saveAll();});
   $('saveBtn').onclick=()=>{capture();showToast('День сохранён ✓');};
   $('prevBtn').onclick=()=>{if(selectedDay>1){capture();selectedDay--;renderDay();}};
