@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1712">
+  <meta name="description" content="Личный 30-дневный трекер намазов, чтения, обучения, тренировок и здоровья.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png">
+  <title>30 дней дисциплины</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1712;--panel:#12231b;--panel2:#1a3025;--line:#2a4535;--text:#eff8f1;--muted:#a8c0ae;--green:#4ade80;--gold:#e8c779}
+    *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#0b1712,#101e17 55%,#0b1712);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+    header{padding:24px 18px 14px;max-width:760px;margin:auto} h1{font-size:26px;margin:0 0 5px} .sub{color:var(--muted);font-size:14px}
+    main{max-width:760px;margin:auto;padding:0 14px 100px}.panel{background:rgba(18,35,27,.96);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0}
+    .topline{display:flex;align-items:center;justify-content:space-between;gap:10px}.daytitle{font-size:19px;font-weight:750}.pill{color:var(--gold);font-size:12px;border:1px solid #675a35;border-radius:999px;padding:5px 9px}
+    .progress{height:8px;background:#26392d;border-radius:99px;overflow:hidden;margin:12px 0 15px}.bar{height:100%;width:0;background:linear-gradient(90deg,#22c55e,#a3e635);transition:width .2s}
+    .days{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}.daybtn{border:1px solid var(--line);background:#13241b;color:var(--text);border-radius:9px;padding:9px 0;font-weight:650}.daybtn.active{background:#1d6840;border-color:var(--green)}.daybtn.hasdata:after{content:"•";display:block;color:var(--green);font-size:10px;height:0;position:relative;top:-3px}
+    h2{font-size:17px;margin:0 0 12px}.sectionhead{display:flex;align-items:center;gap:9px;margin-bottom:12px}.emoji{font-size:20px}
+    .checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.checkrow{display:flex;align-items:center;gap:9px;background:#172b20;border:1px solid #263f30;border-radius:12px;padding:11px;min-height:48px}.checkrow input{accent-color:var(--green);width:19px;height:19px}
+    label.field{display:block;font-size:13px;color:var(--muted);margin:11px 0 5px}input[type=text],input[type=number],input[type=time],input[type=date],textarea,select{width:100%;background:#0d1b13;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:11px;font:inherit;outline:none}textarea{min-height:80px;resize:vertical}
+    .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+    .workout{background:#172b20;border:1px solid #263f30;border-radius:12px;padding:12px 8px;text-align:center}.workout input{accent-color:var(--green);width:19px;height:19px;display:block;margin:0 auto 7px}.workout span{font-size:13px}
+    .small{font-size:12px;color:var(--muted)}.btn{border:0;border-radius:11px;padding:12px 14px;font:inherit;font-weight:700;cursor:pointer}.primary{background:var(--green);color:#092012}.secondary{background:#20392a;color:var(--text);border:1px solid var(--line)}.danger{background:#3b2222;color:#ffd6d6;border:1px solid #704040}
+    .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btnrow .btn{flex:1}.sticky{position:fixed;bottom:0;left:0;right:0;background:#0b1712ed;border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;justify-content:center;backdrop-filter:blur(12px)}.stickyinner{max-width:760px;width:100%;display:flex;gap:8px}.sticky .btn{flex:1}
+    .toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#1d6840;padding:10px 15px;border-radius:999px;display:none;z-index:10;box-shadow:0 6px 25px #0006}
+    @media(min-width:600px){.checks{grid-template-columns:repeat(3,minmax(0,1fr))}.days{grid-template-columns:repeat(10,1fr)}}
+  </style>
+</head>
+<body>
+<header>
+  <h1>🌙 30 дней дисциплины</h1>
+  <div class="sub">Намазы · знания · тренировки · здоровье</div>
+</header>
+<main>
+  <section class="panel">
+    <div class="topline"><div class="daytitle" id="dayTitle">День 1 из 30</div><div class="pill" id="savedStatus">Сохранение включено</div></div>
+    <div class="progress"><div class="bar" id="progressBar"></div></div>
+    <div class="topline"><span class="small" id="completionText">0 привычек отмечено сегодня</span><span class="small" id="percentText">0%</span></div>
+    <label class="field" for="startDate">Дата начала челленджа</label>
+    <input type="date" id="startDate">
+    <div style="height:14px"></div><div class="days" id="days"></div>
+  </section>
+
+  <section class="panel">
+    <div class="sectionhead"><span class="emoji">🕌</span><h2>Намазы</h2></div>
+    <div class="checks" id="prayers">
+      <label class="checkrow"><input type="checkbox" data-check="fajr">Фаджр</label>
+      <label class="checkrow"><input type="checkbox" data-check="dhuhr">Зухр</label>
+      <label class="checkrow"><input type="checkbox" data-check="asr">Аср</label>
+      <label class="checkrow"><input type="checkbox" data-check="maghrib">Магриб</label>
+      <label class="checkrow"><input type="checkbox" data-check="isha">Иша</label>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="sectionhead"><span class="emoji">📚</span><h2>Чтение и обучение</h2></div>
+    <div class="grid2">
+      <div><label class="field" for="pages">Страниц книги прочитано сегодня</label><input id="pages" type="number" min="0" step="1" placeholder="Например, 12" data-field="pages"></div>
+      <div><label class="field" for="learnedTotal">Сколько выучил сегодня</label><input id="learnedTotal" type="number" min="0" step="1" placeholder="Например, 3" data-field="learnedTotal"></div>
+    </div>
+    <label class="field" for="learnedUnit">Что считаешь? (аяты, слова, страницы…)</label><input id="learnedUnit" type="text" placeholder="Например, новых слов" data-field="learnedUnit">
+    <label class="field" for="learningNotes">Заметки об обучении</label><textarea id="learningNotes" placeholder="Что прочитал или выучил?" data-field="learningNotes"></textarea>
+  </section>
+
+  <section class="panel">
+    <div class="sectionhead"><span class="emoji">💪</span><h2>Тренировка</h2></div>
+    <div class="grid3">
+      <label class="workout"><input type="checkbox" data-check="upper"><span>Верх тела</span></label>
+      <label class="workout"><input type="checkbox" data-check="core"><span>Корпус / пресс</span></label>
+      <label class="workout"><input type="checkbox" data-check="lower"><span>Ноги</span></label>
+    </div>
+    <label class="field" for="workoutNotes">Заметки о тренировке</label><textarea id="workoutNotes" placeholder="Упражнения, подходы, самочувствие…" data-field="workoutNotes"></textarea>
+  </section>
+
+  <section class="panel">
+    <div class="sectionhead"><span class="emoji">😴</span><h2>Сон</h2></div>
+    <div class="grid2">
+      <div><label class="field" for="sleepTime">Лёг спать</label><input type="time" id="sleepTime" data-field="sleepTime"></div>
+      <div><label class="field" for="wakeTime">Проснулся</label><input type="time" id="wakeTime" data-field="wakeTime"></div>
+    </div>
+    <div class="topline" style="margin-top:12px"><span class="small">Продолжительность сна</span><strong id="sleepDuration">—</strong></div>
+  </section>
+
+  <section class="panel">
+    <div class="sectionhead"><span class="emoji">🥗</span><h2>Питание</h2></div>
+    <div class="checks">
+      <label class="checkrow"><input type="checkbox" data-check="breakfast">Завтрак</label>
+      <label class="checkrow"><input type="checkbox" data-check="lunch">Обед</label>
+      <label class="checkrow"><input type="checkbox" data-check="dinner">Ужин</label>
+      <label class="checkrow"><input type="checkbox" data-check="water">Пил достаточно воды</label>
+    </div>
+    <label class="field" for="foodNotes">Что ел сегодня / заметки</label><textarea id="foodNotes" placeholder="Еда, порции, заметки…" data-field="foodNotes"></textarea>
+  </section>
+
+  <section class="panel">
+    <div class="sectionhead"><span class="emoji">📏</span><h2>Показатели тела</h2></div>
+    <div class="grid2">
+      <div><label class="field" for="weight">Вес (кг)</label><input type="number" id="weight" min="0" step="0.1" placeholder="Например, 68.5" data-field="weight"></div>
+      <div><label class="field" for="height">Рост (см)</label><input type="number" id="height" min="0" step="0.1" placeholder="Например, 175" data-field="height"></div>
+    </div>
+    <div class="small" style="margin-top:8px">Рост можно записывать при необходимости; вес — когда удобно отслеживать изменения.</div>
+  </section>
+
+  <section class="panel">
+    <div class="sectionhead"><span class="emoji">🗒️</span><h2>Итог дня</h2></div>
+    <label class="field" for="dayNotes">Заметки и выводы</label><textarea id="dayNotes" placeholder="Что получилось? Что улучшить завтра?" data-field="dayNotes"></textarea>
+    <div class="btnrow">
+      <button class="btn secondary" id="exportBtn">Экспортировать резервную копию</button>
+      <button class="btn secondary" id="importBtn">Импортировать копию</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+    <div class="small" style="margin-top:10px">Данные хранятся в этом браузере на этом устройстве. Экспортируй резервную копию, если не хочешь потерять записи при очистке данных браузера.</div>
+  </section>
+</main>
+<div class="sticky"><div class="stickyinner"><button class="btn secondary" id="prevBtn">← День назад</button><button class="btn primary" id="saveBtn">Сохранить день</button><button class="btn secondary" id="nextBtn">Следующий →</button></div></div>
+<div class="toast" id="toast">Сохранено</div>
+<script>
+(() => {
+  const KEY = 'discipline30_v1';
+  const fields = [...document.querySelectorAll('[data-field]')];
+  const checks = [...document.querySelectorAll('[data-check]')];
+  const defaults = {startDate: new Date().toISOString().slice(0,10), days:{}};
+  let state = load();
+  let selectedDay = 1;
+  const $ = id => document.getElementById(id);
+  function load(){ try { return {...defaults,...JSON.parse(localStorage.getItem(KEY)||'{}')}; } catch(e) { return structuredClone(defaults); } }
+  function saveAll(){ localStorage.setItem(KEY, JSON.stringify(state)); renderDays(); updateProgress(); $('savedStatus').textContent='Сохранено ✓'; }
+  function dayData(day=selectedDay){ if(!state.days[day]) state.days[day]={fields:{},checks:{}}; return state.days[day]; }
+  function capture(){
+    const d=dayData();
+    d.fields={};
+    fields.forEach(el=>{ if(el.id!=='startDate') d.fields[el.dataset.field]=el.value; });
+    d.checks={};
+    checks.forEach(el=>d.checks[el.dataset.check]=el.checked);
+    saveAll();
+  }
+  function renderDay(){
+    const d=dayData();
+    fields.forEach(el=>{ if(el.id!=='startDate') el.value=d.fields?.[el.dataset.field] ?? ''; });
+    checks.forEach(el=>el.checked=!!d.checks?.[el.dataset.check]);
+    $('dayTitle').textContent=`День ${selectedDay} из 30`;
+    $('prevBtn').disabled=selectedDay===1; $('nextBtn').disabled=selectedDay===30;
+    $('prevBtn').style.opacity=selectedDay===1?'.45':'1'; $('nextBtn').style.opacity=selectedDay===30?'.45':'1';
+    updateSleep(); renderDays(); updateProgress();
+  }
+  function renderDays(){
+    const holder=$('days'); holder.innerHTML='';
+    for(let d=1;d<=30;d++){
+      const b=document.createElement('button'); b.className='daybtn'+(d===selectedDay?' active':'')+(state.days[d]?' hasdata':''); b.textContent=d;
+      b.setAttribute('aria-label',`День ${d}`); b.onclick=()=>{capture();selectedDay=d;renderDay();};holder.appendChild(b);
+    }
+  }
+  function updateProgress(){
+    const d=dayData(); const allChecks=checks.length; const checked=checks.filter(el=>el.checked).length;
+    // Count checked habits plus completed learning/reading entries as progress items.
+    const pageCount=Number($('pages').value)>0?1:0, learnCount=Number($('learnedTotal').value)>0?1:0;
+    const total=allChecks+2, done=checked+pageCount+learnCount, pct=Math.round(done/total*100);
+    $('progressBar').style.width=pct+'%';$('completionText').textContent=`${done} из ${total} привычек и целей отмечено`; $('percentText').textContent=pct+'%';
+  }
+  function updateSleep(){
+    const a=$('sleepTime').value,b=$('wakeTime').value;
+    if(!a||!b){$('sleepDuration').textContent='—';return;}
+    let [ah,am]=a.split(':').map(Number),[bh,bm]=b.split(':').map(Number);
+    let mins=(bh*60+bm)-(ah*60+am);if(mins<0)mins+=1440;
+    $('sleepDuration').textContent=`${Math.floor(mins/60)} ч ${mins%60} мин`;
+  }
+  fields.forEach(el=>{el.addEventListener('input',()=>{capture();updateSleep();});});
+  checks.forEach(el=>el.addEventListener('change',capture));
+  $('startDate').value=state.startDate||defaults.startDate;
+  $('startDate').addEventListener('change',()=>{state.startDate=$('startDate').value;saveAll();});
+  $('saveBtn').onclick=()=>{capture();showToast('День сохранён ✓');};
+  $('prevBtn').onclick=()=>{if(selectedDay>1){capture();selectedDay--;renderDay();}};
+  $('nextBtn').onclick=()=>{if(selectedDay<30){capture();selectedDay++;renderDay();}};
+  function showToast(msg){$('toast').textContent=msg;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',1600);}
+  $('exportBtn').onclick=()=>{capture();const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='30-dney-distsipliny-backup.json';a.click();URL.revokeObjectURL(url);showToast('Копия подготовлена');};
+  $('importBtn').onclick=()=>$('importFile').click();
+  $('importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const imported=JSON.parse(await f.text());if(!imported.days||typeof imported.days!=='object')throw Error('bad');state={...defaults,...imported};selectedDay=1;saveAll();$('startDate').value=state.startDate||defaults.startDate;renderDay();showToast('Копия загружена ✓');}catch(err){alert('Не удалось прочитать копию. Выбери JSON-файл, экспортированный из приложения.')}e.target.value='';};
+  if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  renderDay();
+})();
+</script>
+</body>
+</html>

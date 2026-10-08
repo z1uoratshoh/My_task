@@ -1,0 +1,16 @@
+{
+  "id": "./",
+  "name": "30 дней дисциплины",
+  "short_name": "Дисциплина 30",
+  "description": "Личный трекер намазов, чтения, обучения, тренировок и здоровья",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b1712",
+  "theme_color": "#0b1712",
+  "icons": [
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"}
+  ]
+}
